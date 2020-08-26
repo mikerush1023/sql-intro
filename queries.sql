@@ -61,3 +61,85 @@ DELETE FROM "Employees" WHERE "FullName" = 'Lazy Larry';
 
 --Add a column to the table: ParkingSpot as textual information that can store up to 10 characters.
 ALTER TABLE "Employees" ADD COLUMN "ParkingSpot" VARCHAR(10);
+
+-- In your CompanyDatabase, add a table named Departments with the following columns:
+CREATE TABLE "Departments" ( 
+ "Id" SERIAL PRIMARY KEY, 
+ "DepartmentName" TEXT, 
+ "Building" TEXT
+ );
+
+ -- Add a Foreign key DepartmentId to your Employees
+ ALTER TABLE "Employees" ADD COLUMN "DepartmentId" INTEGER NULL REFERENCES "Departments" ("Id");
+
+ -- Add tables named Products and Orders
+ CREATE TABLE "Products" ( 
+ "Id" SERIAL PRIMARY KEY, 
+ "Price" FLOAT, 
+ "Name" TEXT, 
+ "Description" TEXT, 
+ "QuantityInStock" INT
+ );
+
+ CREATE TABLE "Orders" ( 
+ "Id" SERIAL PRIMARY KEY, 
+ "OrderNumber" TEXT, 
+ "DatePlaced" TIMESTAMP, 
+ "Email" TEXT
+ );
+
+ -- In our company, one Order can have many Products and one Product can have many Orders. This will be a Many-to-Many relationship. 
+ --Create the necessary table ProductOrders, foreign keys, and the OrderQuantity field needed for this to happen.
+ CREATE TABLE "ProductOrders" ( 
+ "OrderId" INTEGER NULL REFERENCES "Orders" ("Id"),
+ "ProductId" INTEGER NULL REFERENCES "Products" ("Id"),
+ "OrderQuantity" INT
+ );
+
+ --Insert the following Departments
+ INSERT INTO "Departments" ("DepartmentName","Building")
+ VALUES ('Development','Main');
+
+ INSERT INTO "Departments" ("DepartmentName","Building")
+ VALUES ('Marketing','North');
+
+ -- Insert the following Employees
+INSERT INTO "Employees" ("FullName","Salary","JobPosition","PhoneExtension","IsPartTime","DepartmentId") 
+VALUES ('Tim Smith','40000','Programmer','123','false','1');
+
+INSERT INTO "Employees" ("FullName","Salary","JobPosition","PhoneExtension","IsPartTime","DepartmentId") 
+VALUES ('Barbara Ramsey','80000','Manager','234','false','1');
+
+INSERT INTO "Employees" ("FullName","Salary","JobPosition","PhoneExtension","IsPartTime","DepartmentId") 
+VALUES ('Tom Jones','32000','Admin','456','true','2');
+
+-- Insert the following Products
+INSERT INTO "Products" ("Price","Name","Description","QuantityInStock")
+VALUES ('12.45','Widget','The Original Widget','100');
+
+INSERT INTO "Products" ("Price","Name","Description","QuantityInStock")
+VALUES ('99.99','Flowbee','Perfect for haircuts','3');
+
+--  Insert a new order with order number X529, placed on Jan 1st, 2020 at 4:55PM, by someone with the email address "person@example.com"
+INSERT INTO "Orders" ("OrderNumber","DatePlaced","Email")
+VALUES ('X529','2020-01-01 16:55:00','person@exmaple.com');
+
+-- Add an order quantity of 3 for the product named Widget to the order X529
+INSERT INTO "ProductOrders" ("OrderId","ProductId","OrderQuantity")
+VALUES ('1','1','3');
+
+-- Add an order quantity of 2 for the product named Flowbee to the order X529
+INSERT INTO "ProductOrders" ("OrderId","ProductId","OrderQuantity")
+VALUES ('1','2','2');
+
+-- Given a department id, return all employees in the department.
+SELECT "FullName" FROM "Employees" WHERE "DepartmentId" = '1';
+
+--Given a department name, return all the phone extensions.
+SELECT "PhoneExtension" FROM "Employees" WHERE "DepartmentId" = '1';
+
+-- Find all orders that contain the product id of 2.
+SELECT "OrderId" FROM "ProductOrders" WHERE "ProductId" = '2';
+
+--Remove the Flowbee product from order with order number X529.
+DELETE FROM "ProductOrders" WHERE "ProductId" = '2';
