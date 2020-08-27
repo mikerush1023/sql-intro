@@ -135,8 +135,11 @@ VALUES ('1','2','2');
 -- Given a department id, return all employees in the department.
 SELECT "FullName" FROM "Employees" WHERE "DepartmentId" = '1';
 
---Given a department name, return all the phone extensions.
-SELECT "PhoneExtension" FROM "Employees" WHERE "DepartmentId" = '1';
+--Given a department name, return all the phone extensions. Join
+SELECT "Employees"."PhoneExtension"
+FROM "Employees"
+JOIN "Departments" ON "Employees"."DepartmentId" = "Departments"."Id"
+WHERE "Departments"."DepartmentName" = 'Marketing';
 
 -- Find all orders that contain the product id of 2.
 SELECT "OrderId" FROM "ProductOrders" WHERE "ProductId" = '2';
